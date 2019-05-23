@@ -24,7 +24,7 @@ class Api::RecipesController < ApplicationController
                          ingredients: params[:ingredients],
                          directions: params[:directions],
                          image_url: params[:image_url],
-                         user_id: current_user.id
+                         user_id: 1 #current_user.id
                         )
     @recipe.save
     render 'show.json.jbuilder'
@@ -32,7 +32,7 @@ class Api::RecipesController < ApplicationController
 
   def show
     @recipe = Recipe.find(params[:id])
-    render 'show.html'
+    render 'show.json.jbuilder'
   end
 
   def update
