@@ -1,26 +1,26 @@
 class Api::RecipesController < ApplicationController
   def index
-    @recipes = Recipe.all
+    # @recipes = Recipe.all
 
-    search_term = params[:search]
-    if search_term
-      @recipes = @recipes.where("title iLIKE ? OR ingredients iLIKE ?", "%#{search_term}%", "%#{search_term}%")
-    end
-
-    render 'index.json.jbuilder'
-
-    # if current_user
-    #   @recipes = current_user.recipes
-
-    #   search_term = params[:search]
-    #   if search_term
-    #     @recipes = @recipes.where("title iLIKE ? OR ingredients iLIKE ?", "%#{search_term}%", "%#{search_term}%")
-    #   end
-
-    #   render 'index.json.jbuilder'
-    # else
-    #   render json: []
+    # search_term = params[:search]
+    # if search_term
+    #   @recipes = @recipes.where("title iLIKE ? OR ingredients iLIKE ?", "%#{search_term}%", "%#{search_term}%")
     # end
+
+    # render 'index.json.jbuilder'
+
+    if current_user
+      @recipes = current_user.recipes
+
+      search_term = params[:search]
+      if search_term
+        @recipes = @recipes.where("title iLIKE ? OR ingredients iLIKE ?", "%#{search_term}%", "%#{search_term}%")
+      end
+
+      render 'index.json.jbuilder'
+    else
+      render json: []
+    end
   end
 
   def create
@@ -30,10 +30,13 @@ class Api::RecipesController < ApplicationController
                          ingredients: params[:ingredients],
                          directions: params[:directions],
                          image_url: params[:image_url],
-                         user_id: 1 #current_user.id
+                         user_id: current_user.id
                         )
-    @recipe.save
-    render 'show.json.jbuilder'
+    if @recipe.save
+      render 'show.json.jbuilder'
+    else
+      render json: {errors: @recipe.errors.full_messages}, status: :unprocessable_entity
+    end
   end
 
   def show
