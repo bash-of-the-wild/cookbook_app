@@ -7,6 +7,8 @@ class Recipe < ApplicationRecord
 
   belongs_to :user
 
+  scope :total_time, -> { sum(:prep_time) }
+
   def ingredients_list
     ingredients.split(", ")
   end
